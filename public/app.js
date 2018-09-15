@@ -17,7 +17,7 @@ window.onload = () => {
             myVideoId = stream.streamid;
             console.log(myVideoId);
         },
-        onLocalMediaError: err => console.err('error: ' + err)
+        onLocalMediaError: err => console.error('error: ' + err)
     };
 
     connection.videosContainer = document.getElementById('videos-container');
@@ -38,6 +38,7 @@ window.onload = () => {
             ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
             let data = canvas.toDataURL('image/png');
 
+            
             // borna
         };
     });
