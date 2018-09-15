@@ -6,7 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Welcome to Firebase Hosting</title>
+  <title>Beam</title>
+  <link rel="stylesheet" href="styles.css">
+
   <script src="https://rtcmulticonnection.herokuapp.com/dist/RTCMultiConnection.min.js"></script>
   <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -25,16 +27,16 @@
 </head>
 
 <body>
-  <button onclick="connectPress()">Connect</button>
-  <input id="name">
-
-  <button onclick="leaveRoom()">leave</button>
-  <button onclick="joinRoom(document.getElementById('name').value)">join shit</button>
-
   <div id="videos-container"></div>
-  <canvas id='canvas'></canvas>
-  <div id='face-data'></div>
+  <canvas id='canvas' style="display:none;"></canvas>
+
+  <div class="init-overlay">
+    <button onclick="connectPress()">Connect</button>
+    <input id="name">
+
+    <button onclick="leaveRoom()">leave</button>
+    <button onclick="joinRoom(document.getElementById('name').value)">join shit</button>
+    <div id='face-data'></div>
+  </div>
 </body>
-
-
 </html>

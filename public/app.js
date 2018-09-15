@@ -20,7 +20,9 @@ window.onload = () => {
 
     var userKey = "gay";
 
-    //joinRoom('atharvas1-room');
+    let randomRm = Math.random() * 6969696969696969 + '';
+    console.log(randomRm);
+    joinRoom(randomRm);
 };
 
 function initializeConnection() {
@@ -33,7 +35,6 @@ function initializeConnection() {
             video: true
         },
         onGettingLocalMedia: stream => {
-            console.log(stream);
             myVideoId = stream.streamid;
             console.log(myVideoId);
         },
@@ -56,13 +57,15 @@ function joinRoom(roomId) {
     console.log('tryna join ' + roomId);
 
     initializeConnection();
-    connection.openOrJoin(roomId, (inRoomAlready, roomid) => {
+    connection.openOrJoin(roomId, (roomExists, roomid) => {
         // leave current room
         leaveRoom();
 
         console.log('in rm ' + roomid);
         myRoomId = roomid;
         myVideo = document.querySelector('video');
+        myVideo.className += "my-video";
+        myVideo.removeAttribute('controls');
         myVideo.id = myVideoId;
         console.log('here');
 
