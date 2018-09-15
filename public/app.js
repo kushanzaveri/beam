@@ -25,7 +25,7 @@ window.onload = () => {
     connection.getUserMediaHandler(options);
 
     // kushan replace 'bornas-room' with the room finding logic
-    connection.openOrJoin('bornas-room', (isRoomExists, roomid) => {
+    connection.openOrJoin('atharvas-room', (isRoomExists, roomid) => {
         myRoomId = roomid;
         myVideo = document.getElementById(myVideoId);
 
