@@ -14,6 +14,7 @@ window.onload = () => {
             video: true
         },
         onGettingLocalMedia: stream => {
+            console.log(stream);
             myVideoId = stream.streamid;
             console.log(myVideoId);
         },
@@ -25,9 +26,12 @@ window.onload = () => {
     connection.getUserMediaHandler(options);
 
     // kushan replace 'bornas-room' with the room finding logic
-    connection.openOrJoin('atharvas-room', (isRoomExists, roomid) => {
+    connection.openOrJoin('atharvas2-room', (isRoomExists, roomid) => {
+        console.log('in rm ' + roomid);
         myRoomId = roomid;
-        myVideo = document.getElementById(myVideoId);
+        myVideo = document.querySelector('video');
+        myVideo.id = myVideoId;
+        console.log('here');
 
         canvas.height = myVideo.videoHeight;
         canvas.width = myVideo.videoWidth;
