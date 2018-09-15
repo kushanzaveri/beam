@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/zaverikushan/hackthenorth18#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "firebase-tools": "^4.2.1"
   }
 }
