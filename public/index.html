@@ -2,10 +2,18 @@
 <html>
 
 <head>
+
+</head>
+
+<head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Welcome to Firebase Hosting</title>
-
+  <script src="https://rtcmulticonnection.herokuapp.com/dist/RTCMultiConnection.min.js"></script>
+  <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
   <!-- update the version number as needed -->
   <script defer src="/__/firebase/5.5.0/firebase-app.js"></script>
   <!-- include only the Firebase features as you need -->
@@ -94,7 +102,8 @@
 <body>
   <button onclick="connectPress()">Connect</button>
   <input id="name">
-
+  <div id="videos-container"></div>
+  <canvas id='canvas'></canvas>
 
   <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase.js"></script>
   <script>
@@ -160,5 +169,6 @@
   </script>
 
 </body>
+
 
 </html>
