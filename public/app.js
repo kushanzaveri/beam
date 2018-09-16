@@ -65,10 +65,10 @@ function joinRoom(roomId) {
     }
 
     initializeConnection();
-    connection.openOrJoin(roomId, (roomExists, roomid) => {        
+    connection.openOrJoin(roomId, (roomExists, roomid) => {
         console.log('in rm ' + roomid);
         myRoomId = roomid;
-        
+
         if (myVideo) {
             myVideo.remove();
         }
@@ -99,13 +99,14 @@ function connectPress() {
 
     firebase.database().ref('calls/').on("child_added", function (childSnapshot, prevChildKey) {
         if (childSnapshot.key === userKey) {
-            joinRoom(userKey);
+            console.log(userKey + ' is joining room ID ' + childSnapshot.child('roomID').val());
+            joinRoom(childSnapshot.child('roomID').val());
         }
     });
 
     firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
         if (oldChildSnapshot.key === userKey) {
-            console.log("leaving" + oldChildSnapshot.key)
+            console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.val());
             leaveRoom();
         }
     });
@@ -134,26 +135,43 @@ function connectPress() {
 }
 
 function startCall(partner) {
+    var newID = firebase.database().ref('rooms').push("gay").key;
+
     firebase.database().ref('calls/' + userKey).set({
-        partnerID: partner
+        roomID: newID
     });
     firebase.database().ref('calls/' + partner).set({
-        partnerID: userKey
+        roomID: newID
     });
+    firebase.database().ref('rooms/' + newID).set({
+        user1: partner,
+        user2: userKey
+    })
     firebase.database().ref('waiting/' + userKey).remove();
     firebase.database().ref('waiting/' + partner).remove();
-    joinRoom(partner);
+    //joinRoom(partner);
 }
 
 function endCall() {
-    firebase.database().ref('calls/' + userKey + '/partnerID/').once('value')
-        .then(function(a) {
+    firebase.database().ref('calls/' + userKey + '/roomID/').once('value')
+        .then(function (data) {
             //console.log("woah the partner is " + dataSnapshot.key + " " + dataSnapshot.val());
-            console.log("ending call with " + a.val());
-            firebase.database().ref('calls/' + a.val()).remove();
+            console.log("user " + userKey + " is ending call in room " + data.val());
+            // Remove user1 from the room
+            firebase.database().ref('rooms/' + data.val() + '/user1/').once('value')
+                .then(function (user) {
+                    console.log('adfadsfasdf user1 ' + user.val());
+                    firebase.database().ref('calls/' + user.val()).remove();
+                });
+            // Remove user2 from the room
+            firebase.database().ref('rooms/' + data.val() + '/user2/').once('value')
+                .then(function (user) {
+                    console.log('adfadsfasdf user2 ' + user.val());
+                    firebase.database().ref('calls/' + user.val()).remove();
+                });
+            // Remove the room
+            //firebase.database().ref('rooms/' + data.val()).remove();
         });
-
-    firebase.database().ref('calls/' + userKey).remove();
     //leaveRoom();
 }
 
@@ -187,7 +205,7 @@ function processImage(dataURL) {
     var params = {
         "returnFaceId": "true",
         "returnFaceLandmarks": "false",
-        "returnFaceAttributes": "smile,emotion" 
+        "returnFaceAttributes": "smile,emotion"
     };
 
     // Display the image.
@@ -196,41 +214,41 @@ function processImage(dataURL) {
 
     // Perform the REST API call.
     $.ajax({
-        url: uriBase + "?" + $.param(params),
+            url: uriBase + "?" + $.param(params),
 
-        // Request headers.
-        beforeSend: function(xhrObj){
-            xhrObj.setRequestHeader("Content-Type","application/octet-stream");
-            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-        },
+            // Request headers.
+            beforeSend: function (xhrObj) {
+                xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
 
-        type: "POST",
-        processData:false,
-        // Request body.
-        data: mkblob(dataURL),
-    })
+            type: "POST",
+            processData: false,
+            // Request body.
+            data: mkblob(dataURL),
+        })
 
-    .done(function(data) {
-        // Show formatted JSON on webpage.
-        //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
-        //var strr = (JSON.stringify(data));
-        //var objj = JSON.parse(strr);
-        if (data.length == 0 || data[0].faceAttributes.smile >= SMILE) {
-            // you lose bro
-        }
-    })
+        .done(function (data) {
+            // Show formatted JSON on webpage.
+            //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
+            //var strr = (JSON.stringify(data));
+            //var objj = JSON.parse(strr);
+            if (data.length == 0 || data[0].faceAttributes.smile >= SMILE) {
+                // you lose bro
+            }
+        })
 
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        // Display error message.
-        var errorString = (errorThrown === "") ?
-            "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-        errorString += (jqXHR.responseText === "") ?
-            "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            // Display error message.
+            var errorString = (errorThrown === "") ?
+                "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+            errorString += (jqXHR.responseText === "") ?
+                "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
                 jQuery.parseJSON(jqXHR.responseText).message :
-                    jQuery.parseJSON(jqXHR.responseText).error.message;
-        console.log(errorString);
+                jQuery.parseJSON(jqXHR.responseText).error.message;
+            console.log(errorString);
 
-    });
+        });
 
 
 };
