@@ -76,7 +76,8 @@ function joinRoom(roomId) {
         myVideo.ontimeupdate = () => {
             ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
             let data = canvas.toDataURL('image/png');
-            //processImage(data);
+            var smilePercent = processImage(data);
+            console.log(smilePercent);
         };
     });
 }
@@ -178,8 +179,8 @@ function processImage(dataURL) {
     var params = {
         "returnFaceId": "true",
         "returnFaceLandmarks": "false",
-        "returnFaceAttributes": "age,gender,headPose,smile,facialHair,glasses,emotion," +
-            "hair,makeup,occlusion,accessories,blur,exposure,noise"
+        "returnFaceAttributes":
+            "smile,emotion" 
     };
 
     // Display the image.
@@ -188,35 +189,46 @@ function processImage(dataURL) {
 
     // Perform the REST API call.
     $.ajax({
-            url: uriBase + "?" + $.param(params),
+        url: uriBase + "?" + $.param(params),
 
-            // Request headers.
-            beforeSend: function (xhrObj) {
-                xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
-                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-            },
+        // Request headers.
+        beforeSend: function(xhrObj){
+            xhrObj.setRequestHeader("Content-Type","application/octet-stream");
+            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+        },
 
-            type: "POST",
-            processData: false,
-            // Request body.
-            data: mkblob(dataURL),
-        })
+        type: "POST",
+        processData:false,
+        // Request body.
+        data: mkblob(dataURL),
+    })
 
-        .done(function (data) {
-            // Show formatted JSON on webpage.
-            //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
-        })
+    .done(function(data) {
+        // Show formatted JSON on webpage.
+        //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
+        //var strr = (JSON.stringify(data));
+        //var objj = JSON.parse(strr);
+        if (data.length == 0){
+            smileFactor= -1;
+        }
+        else{
+            smileFactor= (data[0].faceAttributes.smile);
+        }
+    })
 
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            // Display error message.
-            var errorString = (errorThrown === "") ?
-                "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-            errorString += (jqXHR.responseText === "") ?
-                "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        // Display error message.
+        var errorString = (errorThrown === "") ?
+            "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+        errorString += (jqXHR.responseText === "") ?
+            "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
                 jQuery.parseJSON(jqXHR.responseText).message :
-                jQuery.parseJSON(jqXHR.responseText).error.message;
-            console.log(errorString);
-        });
+                    jQuery.parseJSON(jqXHR.responseText).error.message;
+        console.log(errorString);
+
+    });
+
+
 };
 
 function mkblob(dataURL) {
