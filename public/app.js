@@ -82,8 +82,8 @@ window.onload = () => {
 function initializeConnection() {
     connection = new RTCMultiConnection();
     //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-    //connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
-    connection.socketURL = 'https://beam-216612.appspot.com/';
+    connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
+    // connection.socketURL = 'https://beam-216612.appspot.com/';
     connection.videosContainer = document.getElementById('videos-container');
     let options = {
         localMediaConstraints: {
