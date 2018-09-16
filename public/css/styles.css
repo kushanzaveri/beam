@@ -14,7 +14,11 @@
     min-height: 100%;
 }
 
-.init-overlay {
+body{
+    background: #3f3f3f;
+}
+
+#init-overlay {
     position: fixed;
     bottom: 0;
     left: 0;

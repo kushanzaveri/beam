@@ -9,6 +9,10 @@ let userKey = "gabe";
 let randomRm = "uscus";
 //let joinedRandom = false;
 let cnt = 1;
+let playing = false;
+let countingFrames = false;
+let framesPast = 0;
+let FRAMES = 10;
 
 window.onload = () => {
     var config = {
@@ -30,6 +34,10 @@ window.onload = () => {
     firebase.database().ref('calls/').on("child_added", function (childSnapshot, prevChildKey) {
         if (childSnapshot.key === userKey) {
             console.log(userKey + ' is joining room ID ' + childSnapshot.child('roomID').val());
+            playing = true;
+            framesPast = 0;
+            countingFrames = false;
+            document.getElementById("init-overlay").style.background = "rgba(0,0,0,0)"
             joinRoom(childSnapshot.child('roomID').val());
         }
     });
@@ -47,7 +55,6 @@ function initializeConnection() {
     //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
     connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
     connection.videosContainer = document.getElementById('videos-container');
-
     let options = {
         localMediaConstraints: {
             audio: false,
@@ -129,9 +136,12 @@ function joinRoom(roomId) {
         let ctx = aicanvas.getContext('2d');
 
         myVideo.ontimeupdate = () => {
-            // ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
+            ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
             let data = aicanvas.toDataURL('image/png');
-            //processImage(data);
+            
+            if (playing || countingFrames){
+                processImage(data);
+            }
         };
     });
 }
@@ -141,6 +151,8 @@ function connectPress() {
     userKey = firebase.database().ref('waiting/').push(
         "gabe"
     ).key;
+
+    document.getElementById("connect").style.display = "none"
 
     firebase.database().ref('waiting/').once("value")
         .then(function (dataSnapshot) {
@@ -162,6 +174,7 @@ function connectPress() {
                 //endCall();
             }
         });
+
 }
 
 function startCall(partner) {
@@ -263,8 +276,30 @@ function processImage(dataURL) {
             //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
             //var strr = (JSON.stringify(data));
             //var objj = JSON.parse(strr);
-            if (data.length == 0 || data[0].faceAttributes.smile >= SMILE) {
-                // you lose bro
+            
+            if (countingFrames){
+                framesPast++;
+                console.log(framesPast)
+                if (framesPast === 1){
+                    console.log ( "you lost")
+
+                }
+                if (framesPast >= FRAMES){
+                    console.log("games over boys");
+                    document.getElementById("init-overlay").style.background = "rgba(255, 180, 0, 0.75)"
+                    framesPast = 0;
+                    countingFrames = false;
+                    endCall();
+                }
+            }
+
+            if ((data.length == 0 || data[0].faceAttributes.smile >= SMILE) && playing) {
+                // var body = document.createElement("p");
+
+                console.log("YOU LOSE BRO")
+        
+                playing = false;
+                countingFrames = true;
             }
         })
 
@@ -282,7 +317,7 @@ function processImage(dataURL) {
 
 
 };
-
+ 
 function mkblob(dataURL) {
     var BASE64_MARKER = ';base64,';
     if (dataURL.indexOf(BASE64_MARKER) == -1) {
