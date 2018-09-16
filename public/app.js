@@ -4,6 +4,7 @@ let connection = null;
 let myVideoId = null;
 let myVideo = null;
 let myRoomId = null;
+let userKey = "gabe";
 
 window.onload = () => {
     var config = {
@@ -17,8 +18,6 @@ window.onload = () => {
     firebase.initializeApp(config);
 
     let canvas = document.getElementById('canvas');
-
-    var userKey = "gay";
 
     let randomRm = Math.random() * 6969696969696969 + '';
     console.log(randomRm);
@@ -83,9 +82,23 @@ function joinRoom(roomId) {
 }
 
 function connectPress() {
+
     userKey = firebase.database().ref('waiting/').push(
         document.getElementById("name").value
     ).key;
+
+    firebase.database().ref('calls/').on("child_added", function (childSnapshot, prevChildKey) {
+        if (childSnapshot.key === userKey) {
+            joinRoom(userKey);
+        }
+    });
+
+    firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
+        if (oldChildSnapshot.key === userKey) {
+            console.log("leaving" + oldChildSnapshot.key)
+            leaveRoom();
+        }
+    });
 
     firebase.database().ref('waiting/').once("value")
         .then(function (dataSnapshot) {
@@ -119,16 +132,32 @@ function startCall(partner) {
     });
     firebase.database().ref('waiting/' + userKey).remove();
     firebase.database().ref('waiting/' + partner).remove();
+    joinRoom(partner);
 }
 
 function endCall() {
+    firebase.database().ref('calls/' + userKey + '/partnerID/').once('value')
+        .then(function(a) {
+            //console.log("woah the partner is " + dataSnapshot.key + " " + dataSnapshot.val());
+            console.log("ending call with " + a.val());
+            firebase.database().ref('calls/' + a.val()).remove();
+        });
+
     firebase.database().ref('calls/' + userKey).remove();
-    //firebase.database.ref('calls/' + user2).remove();
+
+    leaveRoom();
 }
 
-function getPartner() {
-    return firebase.database().ref('calls/' + userKey + '/partnerID').once('value');
-}
+/*function getPartner() {
+    var result = 'AAHHHHH';
+    //console.log("woah the userkey is " + userKey);
+    firebase.database().ref('calls/' + userKey + '/partnerID/').once('value')
+        .then(function(dataSnapshot) {
+            //console.log("woah the partner is " + dataSnapshot.key + " " + dataSnapshot.val());
+            result = dataSnapshot.val();
+        });
+    return result;
+}*/
 
 function processImage(dataURL) {
     // Replace <Subscription Key> with your valid subscription key.
@@ -149,8 +178,7 @@ function processImage(dataURL) {
     var params = {
         "returnFaceId": "true",
         "returnFaceLandmarks": "false",
-        "returnFaceAttributes":
-            "age,gender,headPose,smile,facialHair,glasses,emotion," +
+        "returnFaceAttributes": "age,gender,headPose,smile,facialHair,glasses,emotion," +
             "hair,makeup,occlusion,accessories,blur,exposure,noise"
     };
 
@@ -160,35 +188,35 @@ function processImage(dataURL) {
 
     // Perform the REST API call.
     $.ajax({
-        url: uriBase + "?" + $.param(params),
+            url: uriBase + "?" + $.param(params),
 
-        // Request headers.
-        beforeSend: function(xhrObj){
-            xhrObj.setRequestHeader("Content-Type","application/octet-stream");
-            xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-        },
+            // Request headers.
+            beforeSend: function (xhrObj) {
+                xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
+                xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
 
-        type: "POST",
-        processData:false,
-        // Request body.
-        data: mkblob(dataURL),
-    })
+            type: "POST",
+            processData: false,
+            // Request body.
+            data: mkblob(dataURL),
+        })
 
-    .done(function(data) {
-        // Show formatted JSON on webpage.
-        //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
-    })
+        .done(function (data) {
+            // Show formatted JSON on webpage.
+            //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
+        })
 
-    .fail(function(jqXHR, textStatus, errorThrown) {
-        // Display error message.
-        var errorString = (errorThrown === "") ?
-            "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-        errorString += (jqXHR.responseText === "") ?
-            "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            // Display error message.
+            var errorString = (errorThrown === "") ?
+                "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+            errorString += (jqXHR.responseText === "") ?
+                "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
                 jQuery.parseJSON(jqXHR.responseText).message :
-                    jQuery.parseJSON(jqXHR.responseText).error.message;
-        console.log(errorString);
-    });
+                jQuery.parseJSON(jqXHR.responseText).error.message;
+            console.log(errorString);
+        });
 };
 
 function mkblob(dataURL) {
@@ -197,7 +225,9 @@ function mkblob(dataURL) {
         var parts = dataURL.split(',');
         var contentType = parts[0].split(':')[1];
         var raw = decodeURIComponent(parts[1]);
-        return new Blob([raw], { type: contentType });
+        return new Blob([raw], {
+            type: contentType
+        });
     }
     var parts = dataURL.split(BASE64_MARKER);
     var contentType = parts[0].split(':')[1];
@@ -210,5 +240,7 @@ function mkblob(dataURL) {
         uInt8Array[i] = raw.charCodeAt(i);
     }
 
-    return new Blob([uInt8Array], { type: contentType });
+    return new Blob([uInt8Array], {
+        type: contentType
+    });
 }
