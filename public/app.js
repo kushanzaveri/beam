@@ -4,6 +4,7 @@ let connection = null;
 let myVideoId = null;
 let myVideo = null;
 let myRoomId = null;
+let canvas = null;
 let userKey = "gabe";
 
 window.onload = () => {
@@ -17,7 +18,7 @@ window.onload = () => {
     };
     firebase.initializeApp(config);
 
-    let canvas = document.getElementById('canvas');
+    canvas = document.getElementById('canvas');
 
     let randomRm = Math.random() * 6969696969696969 + '';
     console.log(randomRm);
@@ -27,6 +28,7 @@ window.onload = () => {
 function initializeConnection() {
     connection = new RTCMultiConnection();
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+    connection.videosContainer = document.getElementById('videos-container');
 
     let options = {
         localMediaConstraints: {
@@ -40,7 +42,6 @@ function initializeConnection() {
         onLocalMediaError: err => console.error('error: ' + err)
     };
 
-    connection.videosContainer = document.getElementById('videos-container');
     console.log("c " + connection.videosContainer);
     connection.getUserMediaHandler(options);
 }
@@ -49,23 +50,29 @@ function leaveRoom() {
     // to leave entire room
     connection.getAllParticipants().forEach(participantId => {
         connection.disconnectWith(participantId);
+        console.log('disconnect from user ' + participantId);
     });
 }
 
 function joinRoom(roomId) {
     console.log('tryna join ' + roomId);
 
-    initializeConnection();
-    connection.openOrJoin(roomId, (roomExists, roomid) => {
-        // leave current room
+    if (connection) {
         leaveRoom();
+    }
 
+    initializeConnection();
+    connection.openOrJoin(roomId, (roomExists, roomid) => {        
         console.log('in rm ' + roomid);
         myRoomId = roomid;
-        myVideo = document.querySelector('video');
+        
+        if (myVideo) {
+            myVideo.remove();
+        }
+
+        myVideo = document.getElementById(myVideoId);
         myVideo.className += "my-video";
         myVideo.removeAttribute('controls');
-        myVideo.id = myVideoId;
         console.log('here');
 
         canvas.height = myVideo.videoHeight;
