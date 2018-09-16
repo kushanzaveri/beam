@@ -12,8 +12,8 @@ let cnt = 1;
 let playing = false;
 let countingFrames = false;
 let framesPast = 0;
-let FRAMES = 10;
-
+let FRAMES = 20;
+let iSmiled = false;
 window.onload = () => {
     var config = {
         apiKey: "AIzaSyA8Rgk_fcVf5PjClZLqd33iOhLE8kMSpVY",
@@ -37,15 +37,39 @@ window.onload = () => {
             playing = true;
             framesPast = 0;
             countingFrames = false;
+            iSmiled = false;
+
             document.getElementById("init-overlay").style.background = "rgba(0,0,0,0)"
             joinRoom(childSnapshot.child('roomID').val());
         }
     });
 
+
+
+
     firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
         if (oldChildSnapshot.key === userKey) {
             console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.child('roomID').val());
+            playing = false;
+            framesPast = 0;
+            countingFrames = false;
+            iSmiled = false;
             leaveRoom();
+        }
+    });
+
+
+    firebase.database().ref('results/').on("child_added", function (childSnapshot, prevChildKey) {
+        if (playing) {
+            if (iSmiled) {
+                console.log("YOU LOST");
+                playing = false;
+                iSmiled = false;
+            } else {
+                console.log("YOU WON");
+                playing = false;
+                iSmiled = false;
+            }
         }
     });
 };
@@ -90,6 +114,12 @@ function initializeConnection() {
 }
 
 function leaveRoom() {
+    document.getElementById("connect").style.display = "block"
+    document.getElementById("init-overlay").style.background = "rgba(255, 180, 0, 0.75)"
+    playing = false;
+    framesPast = 0;
+    countingFrames = false;
+    iSmiled = false;
     // to leave entire room
     connection.getAllParticipants().forEach(participantId => {
         connection.disconnectWith(participantId);
@@ -138,8 +168,8 @@ function joinRoom(roomId) {
         myVideo.ontimeupdate = () => {
             ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
             let data = aicanvas.toDataURL('image/png');
-            
-            if (playing || countingFrames){
+
+            if (playing || countingFrames) {
                 processImage(data);
             }
         };
@@ -276,19 +306,19 @@ function processImage(dataURL) {
             //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
             //var strr = (JSON.stringify(data));
             //var objj = JSON.parse(strr);
-            
-            if (countingFrames){
+
+            if (countingFrames) {
                 framesPast++;
                 console.log(framesPast)
-                if (framesPast === 1){
-                    console.log ( "you lost")
-
+                if (framesPast === 1) {
+                    firebase.database().ref('results/').push("bar");
                 }
-                if (framesPast >= FRAMES){
+                if (framesPast >= FRAMES) {
                     console.log("games over boys");
-                    document.getElementById("init-overlay").style.background = "rgba(255, 180, 0, 0.75)"
+
                     framesPast = 0;
                     countingFrames = false;
+
                     endCall();
                 }
             }
@@ -297,8 +327,9 @@ function processImage(dataURL) {
                 // var body = document.createElement("p");
 
                 console.log("YOU LOSE BRO")
-        
+
                 playing = false;
+                iSmiled = true;
                 countingFrames = true;
             }
         })
@@ -317,7 +348,7 @@ function processImage(dataURL) {
 
 
 };
- 
+
 function mkblob(dataURL) {
     var BASE64_MARKER = ';base64,';
     if (dataURL.indexOf(BASE64_MARKER) == -1) {
