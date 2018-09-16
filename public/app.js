@@ -117,7 +117,7 @@ function connectPress() {
 
     firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
         if (oldChildSnapshot.key === userKey) {
-            console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.val());
+            console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.child('roomID').val());
             leaveRoom();
         }
     });
