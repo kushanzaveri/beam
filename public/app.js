@@ -63,10 +63,15 @@ window.onload = () => {
         if (playing) {
             if (iSmiled) {
                 console.log("YOU LOST");
+                document.getElementById("init-overlay").style.background = "rgba(252, 102, 75, 0.25)"
+
                 playing = false;
                 iSmiled = false;
             } else {
                 console.log("YOU WON");
+                document.getElementById("init-overlay").style.background = "rgba(136, 229, 128, 0.25)"
+                document.getElementById("endGameText").style.display = "block"
+                document.getElementById("endGameText").textContent = "YOU WON"
                 playing = false;
                 iSmiled = false;
             }
@@ -114,8 +119,9 @@ function initializeConnection() {
 }
 
 function leaveRoom() {
-    document.getElementById("connect").style.display = "block"
-    document.getElementById("init-overlay").style.background = "rgba(255, 180, 0, 0.75)"
+    document.getElementById("connectdiv").style.display = "inherit"
+    document.getElementById("init-overlay").style.background = "transparent"
+    document.getElementById("endGameText").style.display = "none"
     playing = false;
     framesPast = 0;
     countingFrames = false;
@@ -182,7 +188,7 @@ function connectPress() {
         "gabe"
     ).key;
 
-    document.getElementById("connect").style.display = "none"
+    document.getElementById("connectdiv").style.display = "none"
 
     firebase.database().ref('waiting/').once("value")
         .then(function (dataSnapshot) {
@@ -327,7 +333,9 @@ function processImage(dataURL) {
                 // var body = document.createElement("p");
 
                 console.log("YOU LOSE BRO")
-
+                document.getElementById("init-overlay").style.background = "rgba(252, 102, 75, 0.25)"
+                document.getElementById("endGameText").style.display = "block"
+                document.getElementById("endGameText").textContent = "YOU LOST"
                 playing = false;
                 iSmiled = true;
                 countingFrames = true;

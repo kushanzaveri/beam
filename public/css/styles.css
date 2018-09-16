@@ -6,6 +6,15 @@
     min-height: 100%;
 }
 
+#endGameText {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-family: arial;
+    font-size: 8em;
+}
+
 .my-video {
     float:left;    
     bottom: 0;
@@ -22,7 +31,7 @@ body{
     position: fixed;
     bottom: 0;
     left: 0;
-    background: rgba(255, 180, 0, 0.75);
+    background: rgba(255, 180, 0, 0);
     color: #f1f1f1;
     min-width: 100%;
     min-height: 100%;
@@ -41,12 +50,12 @@ body{
 }
  
 .btn-primary {
-    background: #ffffff;
+    background: rgba(255, 190, 10, 1);
     color: #000000;
 }
  
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-    background: #d8d8d8;
+    background: rgba(255, 190, 10, 1);
 }
  
 .btn-primary:active, .btn-primary.active {
@@ -61,4 +70,9 @@ body{
 
 #aicanvas {
     display: none;
+}
+
+#connect {
+    margin-top: 750px;
+    font-size: 2.5em;
 }
