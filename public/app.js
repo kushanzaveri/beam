@@ -50,11 +50,32 @@ function initializeConnection() {
 
     let options = {
         localMediaConstraints: {
-            audio: true,
+            audio: false,
             video: true
         },
         onGettingLocalMedia: stream => console.log('got local stream ready'),
         onLocalMediaError: err => console.error('error: ' + err)
+    };
+
+    connection.onstream = e => {
+        var parentNode = connection.videosContainer;
+        e.mediaElement.className += 'your-video img-responsive';
+        e.mediaElement.removeAttribute('controls');
+        parentNode.insertBefore(e.mediaElement, parentNode.firstChild);
+        var played = e.mediaElement.play();
+
+        if (typeof played !== 'undefined') {
+            played.catch(function () { /*** iOS 11 doesn't allow automatic play and rejects ***/ }).then(function () {
+                setTimeout(function () {
+                    e.mediaElement.play();
+                }, 2000);
+            });
+            return;
+        }
+
+        setTimeout(function () {
+            e.mediaElement.play();
+        }, 2000);
     };
 
     console.log("c " + connection.videosContainer);
@@ -74,12 +95,7 @@ function leaveRoom() {
 function joinRoom(roomId) {
     console.error('caleed ' + cnt);
     cnt = cnt + 1;
-    /*if (roomId === randomRm && joinedRandom) {
-        return;
-    }
-    else {
-        joinedRandom = true;
-    }*/
+
 
     console.log('tryna join ' + roomId);
 
@@ -98,10 +114,13 @@ function joinRoom(roomId) {
             local: true
         });
 
+
+
         console.log('local stream ' + JSON.stringify(localStream));
 
         myVideo = document.getElementById(localStream.streamid);
-        myVideo.removeAttribute('controls');
+        myVideo.className += ' my-video';
+
         console.log('here');
 
         aicanvas.height = myVideo.videoHeight;
@@ -110,7 +129,7 @@ function joinRoom(roomId) {
         let ctx = aicanvas.getContext('2d');
 
         myVideo.ontimeupdate = () => {
-            ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
+            // ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
             let data = aicanvas.toDataURL('image/png');
             //processImage(data);
         };
@@ -120,14 +139,13 @@ function joinRoom(roomId) {
 function connectPress() {
 
     userKey = firebase.database().ref('waiting/').push(
-        document.getElementById("name").value
+        "gabe"
     ).key;
 
     firebase.database().ref('waiting/').once("value")
         .then(function (dataSnapshot) {
             const amount = dataSnapshot.numChildren();
 
-            console.log(userKey + " " + document.getElementById("name").value);
             console.log(amount);
 
             if (amount > 1) {

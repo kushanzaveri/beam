@@ -1,16 +1,24 @@
-.my-video {
-    /*position: fixed;
-    right: 0;
+.your-video {
+    float:right;    
     bottom: 0;
-    min-width: 100%;
-    min-height: 100%;*/
+    left: 0;
+    min-width: 50%;
+    min-height: 100%;
+}
+
+.my-video {
+    float:left;    
+    bottom: 0;
+    left: 0;
+    min-width: 50%;
+    min-height: 100%;
 }
 
 .init-overlay {
     position: fixed;
     bottom: 0;
     left: 0;
-    background: rgba(255, 222, 141, 0.7);
+    background: rgba(255, 180, 0, 0.75);
     color: #f1f1f1;
     min-width: 100%;
     min-height: 100%;
@@ -29,18 +37,23 @@
 }
  
 .btn-primary {
-    background: #0099cc;
-    color: #ffffff;
+    background: #ffffff;
+    color: #000000;
 }
  
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-    background: #33a6cc;
+    background: #d8d8d8;
 }
  
 .btn-primary:active, .btn-primary.active {
     background: #007299;
     box-shadow: none;
 }
+
+
+.btn.sharp {
+    border-radius:0;
+  }
 
 #aicanvas {
     display: none;

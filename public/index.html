@@ -12,13 +12,12 @@
 
   <script src="https://rtcmulticonnection.herokuapp.com/dist/RTCMultiConnection.min.js"></script>
   <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-          integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-          crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
-  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-  
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+
   <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase-database.js"></script>
 
@@ -32,16 +31,23 @@
 </head>
 
 <body>
-  <div id="videos-container"></div>
+  <!-- Where all the videos go -->
+  <div class="container-fluid">
+    <div class="row" id="videos-container">
+      
+    </div>
+
+  </div>
   <canvas id='aicanvas'></canvas>
 
   <div class="init-overlay">
-    <button onclick="connectPress()">Connect</button>
-    <input id="name">
+    <button type="button" class="btn btn-primary btn-lg sharp" onclick="connectPress()"> Connect </button>
+    <!-- <input id="name"> -->
 
-    <button onclick="endCall()">end call</button>
-    <button onclick="joinRoom(document.getElementById('name').value)">join shit</button>
+    <!-- <button onclick="endCall()">end call</button> -->
+    <!-- <button onclick="joinRoom(document.getElementById('name').value)">join shit</button> -->
     <div id='face-data'></div>
   </div>
 </body>
+
 </html>
