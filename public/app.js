@@ -1,5 +1,7 @@
 // reference: https://github.com/muaz-khan/RTCMultiConnection/blob/master/docs/api.md
 
+let SMILE = 0.95;
+
 let connection = null;
 let myVideoId = null;
 let myVideo = null;
@@ -179,8 +181,7 @@ function processImage(dataURL) {
     var params = {
         "returnFaceId": "true",
         "returnFaceLandmarks": "false",
-        "returnFaceAttributes":
-            "smile,emotion" 
+        "returnFaceAttributes": "smile,emotion" 
     };
 
     // Display the image.
@@ -208,11 +209,8 @@ function processImage(dataURL) {
         //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
         //var strr = (JSON.stringify(data));
         //var objj = JSON.parse(strr);
-        if (data.length == 0){
-            smileFactor= -1;
-        }
-        else{
-            smileFactor= (data[0].faceAttributes.smile);
+        if (data.length == 0 || data[0].faceAttributes.smile >= SMILE) {
+            // you lose bro
         }
     })
 
