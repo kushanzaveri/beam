@@ -26,6 +26,20 @@ window.onload = () => {
     randomRm = Math.floor(Math.random() * 1000000);
     console.log(randomRm);
     joinRoom(randomRm);
+
+    firebase.database().ref('calls/').on("child_added", function (childSnapshot, prevChildKey) {
+        if (childSnapshot.key === userKey) {
+            console.log(userKey + ' is joining room ID ' + childSnapshot.child('roomID').val());
+            joinRoom(childSnapshot.child('roomID').val());
+        }
+    });
+
+    firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
+        if (oldChildSnapshot.key === userKey) {
+            console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.child('roomID').val());
+            leaveRoom();
+        }
+    });
 };
 
 function initializeConnection() {
@@ -33,7 +47,7 @@ function initializeConnection() {
     //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
     connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
     connection.videosContainer = document.getElementById('videos-container');
-    connection.autoCloseEntireSession = true;
+    //connection.autoCloseEntireSession = true;
 
     let options = {
         localMediaConstraints: {
@@ -54,6 +68,8 @@ function leaveRoom() {
         connection.disconnectWith(participantId);
         console.log('disconnect from user ' + participantId);
     });
+
+    connection.close();
 }
 
 function joinRoom(roomId) {
@@ -109,20 +125,6 @@ function connectPress() {
         document.getElementById("name").value
     ).key;
 
-    firebase.database().ref('calls/').on("child_added", function (childSnapshot, prevChildKey) {
-        if (childSnapshot.key === userKey) {
-            console.log(userKey + ' is joining room ID ' + childSnapshot.child('roomID').val());
-            joinRoom(childSnapshot.child('roomID').val());
-        }
-    });
-
-    firebase.database().ref('calls/').on("child_removed", function (oldChildSnapshot) {
-        if (oldChildSnapshot.key === userKey) {
-            console.log("user " + userKey + " is leaving roomID " + oldChildSnapshot.child('roomID').val());
-            leaveRoom();
-        }
-    });
-
     firebase.database().ref('waiting/').once("value")
         .then(function (dataSnapshot) {
             const amount = dataSnapshot.numChildren();
@@ -147,7 +149,7 @@ function connectPress() {
 }
 
 function startCall(partner) {
-    var newID = randomRm; //firebase.database().ref('rooms').push("gay").key;
+    var newID = firebase.database().ref('rooms').push("gay").key;
 
     firebase.database().ref('calls/' + userKey).set({
         roomID: newID
