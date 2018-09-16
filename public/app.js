@@ -65,7 +65,7 @@ function joinRoom(roomId) {
         myRoomId = roomid;
         myVideo = document.querySelector('video');
         myVideo.className += "my-video";
-        //myVideo.removeAttribute('controls');
+        myVideo.removeAttribute('controls');
         myVideo.id = myVideoId;
         console.log('here');
 
