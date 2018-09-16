@@ -29,7 +29,8 @@ window.onload = () => {
 
 function initializeConnection() {
     connection = new RTCMultiConnection();
-    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+    //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+    connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
     connection.videosContainer = document.getElementById('videos-container');
 
     let options = {
@@ -85,8 +86,7 @@ function joinRoom(roomId) {
         myVideo.ontimeupdate = () => {
             ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
             let data = canvas.toDataURL('image/png');
-            var smilePercent = processImage(data);
-            console.log(smilePercent);
+            //processImage(data);
         };
     });
 }
@@ -154,8 +154,7 @@ function endCall() {
         });
 
     firebase.database().ref('calls/' + userKey).remove();
-
-    leaveRoom();
+    //leaveRoom();
 }
 
 /*function getPartner() {
