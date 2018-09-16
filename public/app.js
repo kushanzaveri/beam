@@ -33,6 +33,7 @@ function initializeConnection() {
     //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
     connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
     connection.videosContainer = document.getElementById('videos-container');
+    connection.autoCloseEntireSession = true;
 
     let options = {
         localMediaConstraints: {
