@@ -1,3 +1,47 @@
+.my-video {
+    /*position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;*/
+}
+
+.init-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 222, 141, 0.7);
+    color: #f1f1f1;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.btn {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+ 
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+}
+ 
+.btn-primary {
+    background: #0099cc;
+    color: #ffffff;
+}
+ 
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background: #33a6cc;
+}
+ 
+.btn-primary:active, .btn-primary.active {
+    background: #007299;
+    box-shadow: none;
+}
+
 #aicanvas {
     display: none;
 }
