@@ -3,9 +3,7 @@
 let SMILE = 0.95;
 
 let connection = null;
-let myVideoId = null;
 let myVideo = null;
-let myRoomId = null;
 let canvas = null;
 let userKey = "gabe";
 let randomRm = "uscus";
@@ -39,10 +37,7 @@ function initializeConnection() {
             audio: true,
             video: true
         },
-        onGettingLocalMedia: stream => {
-            myVideoId = stream.streamid;
-            console.log(myVideoId);
-        },
+        onGettingLocalMedia: stream => console.log('got local stream ready'),
         onLocalMediaError: err => console.error('error: ' + err)
     };
 
@@ -61,20 +56,20 @@ function leaveRoom() {
 function joinRoom(roomId) {
     console.log('tryna join ' + roomId);
 
-    if (connection) {
-        leaveRoom();
-    }
+    let allvids = document.getElementById('videos-container').querySelectorAll('video');
+    allvids.forEach(vid => vid.remove());
 
     initializeConnection();
     connection.openOrJoin(roomId, (roomExists, roomid) => {
         console.log('in rm ' + roomid);
-        myRoomId = roomid;
 
-        if (myVideo) {
-            myVideo.remove();
-        }
+        let localStream = connection.streamEvents.selectFirst({
+            local: true
+        });
 
-        myVideo = document.getElementById(myVideoId);
+        console.log(localStream);
+
+        myVideo = document.getElementById(localStream.streamid);
         myVideo.className += "my-video";
         myVideo.removeAttribute('controls');
         console.log('here');
