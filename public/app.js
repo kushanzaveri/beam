@@ -7,6 +7,12 @@ let myVideo = null;
 let aicanvas = null;
 let userKey = "gabe";
 let randomRm = "uscus";
+let faceCanvas = null;
+let faceCtx = null;
+let clickX = new Array();
+let clickY = new Array();
+let clickDrag = new Array();
+let paint = false;
 //let joinedRandom = false;
 let cnt = 1;
 
@@ -41,6 +47,71 @@ window.onload = () => {
         }
     });
 };
+
+function initFaceCanvas() {
+    faceCanvas.onmousedown = e => {
+        console.log('mouse down');
+        console.log(e);
+        let mx = e.pageX;
+        let my = e.pageY;
+
+        paint = true;
+        addClick(mx, my);
+        redraw();
+    };
+
+    faceCanvas.onmousemove = e => {
+        if(paint) {
+            console.log('mouse move');
+            console.log(e);
+
+            let mx = e.pageX;
+            let my = e.pageY;
+
+            addClick(mx, my, true);
+            redraw();
+        }
+    };
+
+    faceCanvas.onmouseup = e => {
+        console.log('mouse up');
+        paint = false;
+    };
+
+    faceCanvas.onmouseleave = e => {
+        console.log('mouse leave');
+        paint = false;
+    };
+}
+
+function addClick(x, y, dragging) {
+  clickX.push(x);
+  clickY.push(y);
+  clickDrag.push(dragging);
+}
+
+function redraw() {
+    faceCtx.strokeStyle = "#df4b26";
+    faceCtx.lineJoin = "round";
+    faceCtx.lineWidth = 5;
+
+    console.log(clickX);
+
+    for (let i = 0; i < clickX.length; i++) {
+        faceCtx.beginPath();
+
+        if (clickDrag[i] && i) {
+            faceCtx.moveTo(clickX[i - 1], clickY[i - 1]);
+        }
+        else {
+            faceCtx.moveTo(clickX[i] - 1, clickY[i]);
+        }
+
+        faceCtx.lineTo(clickX[i], clickY[i]);
+        faceCtx.closePath();
+        faceCtx.stroke();
+    }
+}
 
 function initializeConnection() {
     connection = new RTCMultiConnection();
@@ -103,6 +174,20 @@ function joinRoom(roomId) {
         myVideo = document.getElementById(localStream.streamid);
         myVideo.removeAttribute('controls');
         console.log('here');
+
+        faceCanvas = document.createElement('canvas');
+        faceCanvas.classList += ' face-canvas';
+        faceCtx = faceCanvas.getContext('2d');
+
+        container.appendChild(faceCanvas);
+
+        let rect = container.getBoundingClientRect();
+
+        faceCanvas.height = rect.height;
+        faceCanvas.width = rect.width;
+        initFaceCanvas();
+
+        console.log('faceCanvas: ' + faceCanvas.height + ' ' + faceCanvas.width);
 
         aicanvas.height = myVideo.videoHeight;
         aicanvas.width = myVideo.videoWidth;
