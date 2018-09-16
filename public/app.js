@@ -23,7 +23,7 @@ window.onload = () => {
 
     canvas = document.getElementById('canvas');
 
-    randomRm = Math.floor(Math.random() * 1000000000) + '';
+    randomRm = Math.floor(Math.random() * 1000000);
     console.log(randomRm);
     joinRoom(randomRm);
 };
