@@ -77,7 +77,8 @@ function joinRoom(roomId) {
         myVideo.ontimeupdate = () => {
             ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
             let data = canvas.toDataURL('image/png');
-            //processImage(data);
+            processImage(data);
+            //console.log(retu);
         };
     });
 }
@@ -150,8 +151,7 @@ function processImage(dataURL) {
         "returnFaceId": "true",
         "returnFaceLandmarks": "false",
         "returnFaceAttributes":
-            "age,gender,headPose,smile,facialHair,glasses,emotion," +
-            "hair,makeup,occlusion,accessories,blur,exposure,noise"
+            "smile,emotion" 
     };
 
     // Display the image.
@@ -177,6 +177,7 @@ function processImage(dataURL) {
     .done(function(data) {
         // Show formatted JSON on webpage.
         //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
+        console.log(JSON.stringify(data, null, 2));
     })
 
     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -188,6 +189,7 @@ function processImage(dataURL) {
                 jQuery.parseJSON(jqXHR.responseText).message :
                     jQuery.parseJSON(jqXHR.responseText).error.message;
         console.log(errorString);
+        //'return 'API Fail'
     });
 };
 
