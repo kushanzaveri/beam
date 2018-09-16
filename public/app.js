@@ -8,6 +8,7 @@ let canvas = null;
 let userKey = "gabe";
 let randomRm = "uscus";
 let joinedRandom = false;
+let cnt = 1;
 
 window.onload = () => {
     var config = {
@@ -55,6 +56,8 @@ function leaveRoom() {
 }
 
 function joinRoom(roomId) {
+    console.error('caleed ' + cnt);
+    cnt = cnt + 1;
     if (roomId === randomRm && joinedRandom) {
         return;
     }
