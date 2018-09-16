@@ -8,6 +8,7 @@ let myVideo = null;
 let myRoomId = null;
 let canvas = null;
 let userKey = "gabe";
+let randomRm = "uscus";
 
 window.onload = () => {
     var config = {
@@ -22,7 +23,7 @@ window.onload = () => {
 
     canvas = document.getElementById('canvas');
 
-    let randomRm = Math.random() * 6969696969696969 + '';
+    randomRm = Math.random() * 6969696969696969 + '';
     console.log(randomRm);
     joinRoom(randomRm);
 };
@@ -135,7 +136,7 @@ function connectPress() {
 }
 
 function startCall(partner) {
-    var newID = firebase.database().ref('rooms').push("gay").key;
+    var newID = randomRm; //firebase.database().ref('rooms').push("gay").key;
 
     firebase.database().ref('calls/' + userKey).set({
         roomID: newID
