@@ -4,7 +4,7 @@ let SMILE = 0.95;
 
 let connection = null;
 let myVideo = null;
-let canvas = null;
+let aicanvas = null;
 let userKey = "gabe";
 let randomRm = "uscus";
 //let joinedRandom = false;
@@ -21,7 +21,7 @@ window.onload = () => {
     };
     firebase.initializeApp(config);
 
-    canvas = document.getElementById('canvas');
+    aicanvas = document.getElementById('aicanvas');
 
     randomRm = Math.floor(Math.random() * 1000000);
     console.log(randomRm);
@@ -47,7 +47,6 @@ function initializeConnection() {
     //connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
     connection.socketURL = 'https://polar-island-71747.herokuapp.com/';
     connection.videosContainer = document.getElementById('videos-container');
-    //connection.autoCloseEntireSession = true;
 
     let options = {
         localMediaConstraints: {
@@ -102,18 +101,17 @@ function joinRoom(roomId) {
         console.log('local stream ' + JSON.stringify(localStream));
 
         myVideo = document.getElementById(localStream.streamid);
-        myVideo.className += "my-video";
         myVideo.removeAttribute('controls');
         console.log('here');
 
-        canvas.height = myVideo.videoHeight;
-        canvas.width = myVideo.videoWidth;
+        aicanvas.height = myVideo.videoHeight;
+        aicanvas.width = myVideo.videoWidth;
 
-        let ctx = canvas.getContext('2d');
+        let ctx = aicanvas.getContext('2d');
 
         myVideo.ontimeupdate = () => {
-            ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
-            let data = canvas.toDataURL('image/png');
+            ctx.drawImage(myVideo, 0, 0, aicanvas.width, aicanvas.height);
+            let data = aicanvas.toDataURL('image/png');
             //processImage(data);
         };
     });
