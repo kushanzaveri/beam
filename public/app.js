@@ -65,7 +65,7 @@ function joinRoom(roomId) {
         myRoomId = roomid;
         myVideo = document.querySelector('video');
         myVideo.className += "my-video";
-        myVideo.removeAttribute('controls');
+        //myVideo.removeAttribute('controls');
         myVideo.id = myVideoId;
         console.log('here');
 
@@ -77,8 +77,8 @@ function joinRoom(roomId) {
         myVideo.ontimeupdate = () => {
             ctx.drawImage(myVideo, 0, 0, canvas.width, canvas.height);
             let data = canvas.toDataURL('image/png');
-            processImage(data);
-            //console.log(retu);
+            var smilePercent = processImage(data);
+            console.log(smilePercent);
         };
     });
 }
@@ -177,7 +177,14 @@ function processImage(dataURL) {
     .done(function(data) {
         // Show formatted JSON on webpage.
         //document.getElementById('face-data').innerHTML = JSON.stringify(data, null, 2);
-        console.log(JSON.stringify(data, null, 2));
+        //var strr = (JSON.stringify(data));
+        //var objj = JSON.parse(strr);
+        if (data.length == 0){
+            smileFactor= -1;
+        }
+        else{
+            smileFactor= (data[0].faceAttributes.smile);
+        }
     })
 
     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -189,8 +196,9 @@ function processImage(dataURL) {
                 jQuery.parseJSON(jqXHR.responseText).message :
                     jQuery.parseJSON(jqXHR.responseText).error.message;
         console.log(errorString);
-        //'return 'API Fail'
+
     });
+
 };
 
 function mkblob(dataURL) {
