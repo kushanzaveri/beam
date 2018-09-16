@@ -57,7 +57,10 @@ function joinRoom(roomId) {
     console.log('tryna join ' + roomId);
 
     let allvids = document.getElementById('videos-container').querySelectorAll('video');
-    allvids.forEach(vid => vid.remove());
+    allvids.forEach(vid => {
+        console.log('delete: ' + vid);
+        vid.remove();
+    });
 
     initializeConnection();
     connection.openOrJoin(roomId, (roomExists, roomid) => {
