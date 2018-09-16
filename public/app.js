@@ -7,6 +7,7 @@ let myVideo = null;
 let canvas = null;
 let userKey = "gabe";
 let randomRm = "uscus";
+let joinedRandom = false;
 
 window.onload = () => {
     var config = {
@@ -21,7 +22,7 @@ window.onload = () => {
 
     canvas = document.getElementById('canvas');
 
-    randomRm = Math.random() * 6969696969696969 + '';
+    randomRm = Math.floor(Math.random() * 1000000000) + '';
     console.log(randomRm);
     joinRoom(randomRm);
 };
@@ -54,13 +55,21 @@ function leaveRoom() {
 }
 
 function joinRoom(roomId) {
+    if (roomId === randomRm && joinedRandom) {
+        return;
+    }
+    else {
+        joinedRandom = true;
+    }
+
     console.log('tryna join ' + roomId);
 
-    let allvids = document.getElementById('videos-container').querySelectorAll('video');
-    allvids.forEach(vid => {
-        console.log('delete: ' + vid);
-        vid.remove();
-    });
+    let container = document.getElementById('videos-container');
+
+    while (container.firstChild) {
+        console.log('delete ' + container.firstChild.id);
+        container.removeChild(container.firstChild);
+    }
 
     initializeConnection();
     connection.openOrJoin(roomId, (roomExists, roomid) => {
@@ -70,7 +79,7 @@ function joinRoom(roomId) {
             local: true
         });
 
-        console.log(localStream);
+        console.log('local stream ' + JSON.stringify(localStream));
 
         myVideo = document.getElementById(localStream.streamid);
         myVideo.className += "my-video";
